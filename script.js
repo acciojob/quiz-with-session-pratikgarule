@@ -1,7 +1,28 @@
-//your JS code here.
+// Check if session storage is supported by the browser
+if (typeof sessionStorage !== 'undefined') {
+  // Retrieve the saved quiz progress from session storage
+  var quizProgressString = sessionStorage.getItem('progress');
+  if (quizProgressString) {
+    var quizProgress = JSON.parse(quizProgressString);
+    // Set the user's selected answers based on the saved progress
+    var userAnswers = quizProgress.selectedAnswers;
+  } else {
+    // Initialize the quiz progress if no saved progress is found
+    var quizProgress = {
+      currentQuestion: 0,
+      selectedAnswers: []
+    };
+    // Initialize userAnswers array with empty values
+    var userAnswers = Array(questions.length).fill('');
+  }
+} else {
+  // Session storage is not supported
+  // Handle the case accordingly (e.g., use alternative storage mechanism)
+}
 
-// Do not change code below this line
-// This code will just display the questions to the screen
+// Display the quiz questions and choices
+var questionsElement = document.getElementById("questions");
+
 const questions = [
   {
     question: "What is the capital of France?",
@@ -54,3 +75,26 @@ function renderQuestions() {
   }
 }
 renderQuestions();
+
+var submitButton = document.getElementById("submit");
+submitButton.addEventListener("click", function() {
+  // Calculate the score based on the user's answers
+  var score = 0;
+  for (let i = 0; i < questions.length; i++) {
+    if (userAnswers[i] === questions[i].answer) {
+      score++;
+    }
+  }
+
+  // Display the score on the page
+  var scoreElement = document.getElementById("score");
+  scoreElement.textContent = "Your score is " + score + " out of 5.";
+
+  // Store the score in local storage
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('score', score);
+  } else {
+    // Local storage is not supported
+    // Handle the case accordingly (e.g., use alternative storage mechanism)
+  }
+});
